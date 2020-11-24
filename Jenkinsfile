@@ -1,20 +1,17 @@
 pipeline {
     agent any 
     stages {
-        stage('Build') { 
-            steps {
-                echo "this is my Build Stage"
-            }
-        }
-        stage('Test') { 
-            steps {
-               echo "This is My Test stage"
-            }
-        }
-        stage('Deploy') { 
-            steps {
-                echo "This is my Deployment"
-            }
-        }
+        stage ('Git-Commit')
+         {
+ git credentialsId: 'krishnavagu', url: 'https://github.com/krishnavagu/Boat.git'
+}
+ stage ('maven-project')
+{
+sh label: '', script: 'mvn clean package'
+}
+stage ('Deployment')
+{
+deploy adapters: [tomcat9(credentialsId: 'tomcat', path: '', url: 'http://54.159.254.39:8090/')], contextPath: null, war: '**/*.war'
+}
     }
 }
